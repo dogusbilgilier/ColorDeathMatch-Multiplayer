@@ -64,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
     {
         fsm.OnUpdate();
 
-        if (EventManager.SpeedBoost())
+        if (EventManager.SpeedBoost()&&EventManager.MovementInputDelta().y>0)
             targetForce = boostedForce;
         else
             targetForce = defaultForce;
@@ -201,7 +201,7 @@ public class PlayerMovement : MonoBehaviour
             case Fsm.Step.Update:
                 playerAnimation.SetRunAnimMovement(EventManager.MovementInputDelta());
 
-                if (!EventManager.SpeedBoost())
+                if (!EventManager.SpeedBoost() || EventManager.MovementInputDelta().y > 0)
                     fsm.TransitionTo(moveState);
 
                 break;
@@ -241,7 +241,7 @@ public class PlayerMovement : MonoBehaviour
 
                 playerAnimation.SetRunAnimMovement(EventManager.MovementInputDelta());
 
-                if (EventManager.SpeedBoost()&& EventManager.MovementInputDelta().magnitude > 0)
+                if (EventManager.SpeedBoost() && EventManager.MovementInputDelta().magnitude > 0 && EventManager.MovementInputDelta().y > 0) 
                     fsm.TransitionTo(boostState);
 
                 if (EventManager.MovementInputDelta().magnitude <= 0)
