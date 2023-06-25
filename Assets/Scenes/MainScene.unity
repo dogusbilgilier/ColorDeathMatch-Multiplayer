@@ -3422,6 +3422,9 @@ MonoBehaviour:
   spine: {fileID: 3307165258085951815}
   leftHandAim: {fileID: 22599417}
   rightHandAim: {fileID: 1227188886}
+  leftHandIK: {fileID: 1926802226}
+  rightHandIK: {fileID: 1684688044}
+  recoilEase: 9
 --- !u!114 &1685212342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4250,7 +4253,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2126986061
 Transform:
   m_ObjectHideFlags: 0

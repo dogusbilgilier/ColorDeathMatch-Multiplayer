@@ -16,6 +16,7 @@ public class ShootingManager : MonoBehaviour
     [SerializeField] LayerMask bulletLayerMask;
     RaycastHit camHit,leftMuzzleHit,rightMuzzleHit;
 
+
     int shootCount;
 
     private void OnEnable()
@@ -55,6 +56,7 @@ public class ShootingManager : MonoBehaviour
     {
         shootCount++;
         bulletHolders[shootCount%2].transform.GetChild(0).GetComponent<Bullet>().Shoot(bulletTargetObject.transform.position,bulletSpeed,GetComponent<Player>().gunColor);
+        FindObjectOfType<AimMamager>().Recoil(shootCount % 2!=0);
     }
 
     void FindTargetForShooting()
