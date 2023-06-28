@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(InputField))]
+[RequireComponent(typeof(TMPro.TMP_InputField))]
 public class PlayerNameInputField : MonoBehaviour
 {
     #region Private Constants

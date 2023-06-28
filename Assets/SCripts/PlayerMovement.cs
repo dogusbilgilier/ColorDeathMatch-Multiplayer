@@ -2,7 +2,9 @@ using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using Sirenix.OdinInspector;
-public class PlayerMovement : MonoBehaviour
+using Photon.Pun;
+
+public class PlayerMovement : MonoBehaviourPun
 {
     #region Fields
 
@@ -37,13 +39,18 @@ public class PlayerMovement : MonoBehaviour
     Fsm.State jumpState;
 
     PlayerAnimation playerAnimation;
+    AimMamager aimManager;
     private bool startAim;
+
+     InputManager inputManager;
     #endregion
 
     #region MonoBehaviour
 
     private void Start()
     {
+        aimManager = GetComponent<AimMamager>();
+        inputManager = GetComponent<InputManager>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         checkGrounded = true;
@@ -62,9 +69,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+      
+
+        
         fsm.OnUpdate();
 
-        if (EventManager.SpeedBoost()&&EventManager.MovementInputDelta().y>0)
+        if (inputManager.speedBoost && inputManager.movementInputDelta.y>0)
             targetForce = boostedForce;
         else
             targetForce = defaultForce;
@@ -74,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
         else
             rb.drag = 0;
 
-        if (EventManager.Jump() && grounded)
+        if (inputManager.jump && grounded)
             fsm.TransitionTo(jumpState);
 
         SpeedControl();
@@ -82,19 +92,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+       
         if (checkGrounded)
             CheckIfLanded();
-        if (EventManager.Aim() && !startAim)
+        if (inputManager.aim && !startAim)
         {
             playerAnimation.AimAnim(true);
             startAim = true;
-            EventManager.StartAim.Invoke();
+            aimManager.StartAim();
         }
-        else if(!EventManager.Aim() && startAim)
+        else if(!inputManager.aim && startAim)
         {
             startAim = false;
             playerAnimation.AimAnim(false);
-            EventManager.EndAim.Invoke();
+            aimManager.EndAim();
         }
 
         Move();
@@ -109,8 +120,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Move()
     {
-        moveVector = orientation.forward * EventManager.MovementInputDelta().y + orientation.right * EventManager.MovementInputDelta().x;
-        transform.localEulerAngles += new Vector3(0, EventManager.MouseInputDelta().x, 0);
+        moveVector = orientation.forward * inputManager.movementInputDelta.y + orientation.right * inputManager.movementInputDelta.x;
+        transform.localEulerAngles += new Vector3(0, inputManager.mouseInputDelta.x, 0);
 
         if (grounded)
             rb.AddForce(targetForce * Time.fixedDeltaTime * moveVector.normalized, ForceMode.Force);
@@ -122,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if (EventManager.SpeedBoost())
+        if (inputManager.speedBoost)
             moveSpeed = boostedMoveSpeed;
         else
             moveSpeed = defaultMoveSpeed;
@@ -199,9 +210,9 @@ public class PlayerMovement : MonoBehaviour
                 playerAnimation.BoostAnim(true);
                 break;
             case Fsm.Step.Update:
-                playerAnimation.SetRunAnimMovement(EventManager.MovementInputDelta());
+                playerAnimation.SetRunAnimMovement(inputManager.movementInputDelta);
 
-                if (!EventManager.SpeedBoost() || EventManager.MovementInputDelta().y > 0)
+                if (!inputManager.speedBoost || inputManager.movementInputDelta.y > 0)
                     fsm.TransitionTo(moveState);
 
                 break;
@@ -220,7 +231,7 @@ public class PlayerMovement : MonoBehaviour
                 break;
             case Fsm.Step.Update:
 
-                if(EventManager.MovementInputDelta().magnitude>0)
+                if(inputManager.movementInputDelta.magnitude>0)
                     fsm.TransitionTo(moveState);
 
                 break;
@@ -239,12 +250,12 @@ public class PlayerMovement : MonoBehaviour
                 break;
             case Fsm.Step.Update:
 
-                playerAnimation.SetRunAnimMovement(EventManager.MovementInputDelta());
+                playerAnimation.SetRunAnimMovement(inputManager.movementInputDelta);
 
-                if (EventManager.SpeedBoost() && EventManager.MovementInputDelta().magnitude > 0 && EventManager.MovementInputDelta().y > 0) 
+                if (inputManager.speedBoost && inputManager.movementInputDelta.magnitude > 0 && inputManager.movementInputDelta.y > 0) 
                     fsm.TransitionTo(boostState);
 
-                if (EventManager.MovementInputDelta().magnitude <= 0)
+                if (inputManager.movementInputDelta.magnitude <= 0)
                     fsm.TransitionTo(idleState);
 
                 break;

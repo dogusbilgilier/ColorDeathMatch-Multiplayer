@@ -1,14 +1,36 @@
 
+using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
+using System.Collections;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class MyPlayer : MonoBehaviourPun
 {
+
+    public static GameObject LocalPlayerInstance;
+
+
+    private void Awake()
+    {
+        if (photonView.IsMine)
+        {
+            PlayerManager.LocalPlayerInstance = this.gameObject;
+        }
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     [Range(0, 100)] public int health;
     public PlayerColor playerColor;
     public GunColor gunColor;
     [SerializeField] SkinnedMeshRenderer meshRenderer;
 
-    private void Start()
+    private IEnumerator Start()
+    {
+        yield return new WaitForSeconds(1);
+        photonView.RPC("Initialize", RpcTarget.All);
+    }
+    [PunRPC]
+    void Initialize()
     {
         Material[] materials = meshRenderer.materials;
         switch (playerColor)
@@ -29,19 +51,19 @@ public class Player : MonoBehaviour
                 materials[1].color = Color.red;
                 break;
             case GunColor.Green:
-                materials[1].color= Color.green;
+                materials[1].color = Color.green;
                 break;
             case GunColor.Blue:
                 materials[1].color = Color.blue;
                 break;
             case GunColor.Purple:
-                materials[1].color = Color.red/2;
+                materials[1].color = Color.red / 2;
                 break;
         }
         meshRenderer.materials = materials;
     }
 
-    void Initialize()
+    public void GetHit()
     {
 
     }

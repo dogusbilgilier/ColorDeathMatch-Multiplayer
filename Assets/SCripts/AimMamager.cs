@@ -1,11 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using DG.Tweening;
+using Photon.Pun;
 
-public class AimMamager : MonoBehaviour
+
+public class AimMamager : MonoBehaviourPun,IPunObservable
 {
     [SerializeField] Transform aimTarget;
     [SerializeField] float lookSpeed;
@@ -19,31 +19,32 @@ public class AimMamager : MonoBehaviour
 
     [SerializeField] Ease recoilEase;
 
-    float targetY, targetZ;
+    InputManager inputManager;
+   
     private void OnEnable()
     {
-        EventManager.StartAim += StartAim;
-        EventManager.EndAim += EndAim;
+        inputManager = GetComponent<InputManager>();
+        
     }
-    private void OnDisable()
-    {
-        EventManager.StartAim -= StartAim;
-        EventManager.EndAim -= EndAim;
-    }
+
     private void Start()
     {
+        
         leftHandAim.weight = 0f;
         rightHandAim.weight = 0f;
         aimTarget.transform.localPosition = new Vector3(0, 0, 3);
         aimTarget.position = new Vector3(aimTarget.position.x, spine.position.y, aimTarget.position.z);
 
+
         leftHandIKDefRot = leftHandIK.transform.localEulerAngles;
         rightHandIKDefRot =rightHandIK.transform.localEulerAngles;
+        
+        
     }
 
     private void Update()
     {
-        aimTarget.position += Vector3.up * EventManager.MouseInputDelta().y * Time.deltaTime * lookSpeed;
+        aimTarget.position += Vector3.up * inputManager.mouseInputDelta.y * Time.deltaTime * lookSpeed;
 
         aimTarget.position = new Vector3(aimTarget.position.x,
             Mathf.Clamp(aimTarget.position.y, spine.position.y - 3, spine.position.y + 3),
@@ -72,18 +73,36 @@ public class AimMamager : MonoBehaviour
 
         }
     }
-    private void StartAim()
+    
+    public void StartAim()
     {
-        DOTween.Kill("Down0");
-        DOTween.Kill("Down1");
-        DOTween.To(() => leftHandAim.weight, x => leftHandAim.weight = x, 1, 0.5f).SetId("Up0"); 
-        DOTween.To(() => rightHandAim.weight, x => rightHandAim.weight = x, 1, 0.5f).SetId("Up1"); 
+        //DOTween.Kill("Up0");
+        //DOTween.Kill("Up1");
+
+        photonView.RPC("StartAimRPC", RpcTarget.All);
     }
-    private void EndAim()
+    [PunRPC]
+    void StartAimRPC()
     {
-        DOTween.Kill("Up0");
-        DOTween.Kill("Up1");
+        DOTween.To(() => leftHandAim.weight, x => leftHandAim.weight = x, 1, 0.5f).SetId("Up0");
+        DOTween.To(() => rightHandAim.weight, x => rightHandAim.weight = x, 1, 0.5f).SetId("Up1");
+    }
+    [PunRPC]
+    void StopAimRPC()
+    {
         DOTween.To(() => leftHandAim.weight, x => leftHandAim.weight = x, 0, 0.5f).SetId("Down0");
         DOTween.To(() => rightHandAim.weight, x => rightHandAim.weight = x, 0, 0.5f).SetId("Down1");
+    }
+    
+    public void EndAim()
+    {
+        //DOTween.Kill("Down0");
+        //DOTween.Kill("Down1");
+        photonView.RPC("StopAimRPC", RpcTarget.All);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+
     }
 }

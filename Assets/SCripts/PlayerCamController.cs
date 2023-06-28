@@ -1,24 +1,28 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class PlayerCamController : MonoBehaviour
+public class PlayerCamController : MonoBehaviourPun
 {
     [SerializeField] GameObject camPos;
-    [SerializeField][Range(-90,90)] float minX, maxX;
     [SerializeField] float lerpSpeed;
-
-    float xRot;
+    Transform camTransform;
 
     private void Start()
     {
-        transform.rotation = Quaternion.identity;
+        if (photonView.IsMine)
+        {
+            camTransform = Camera.main.transform;
+            camTransform.rotation = Quaternion.identity;
+        }
+       
     }
     private void LateUpdate()
     {
-
-        transform.SetPositionAndRotation(Vector3.Lerp(transform.position, camPos.transform.position, lerpSpeed * Time.deltaTime),
+        if (photonView.IsMine)
+            camTransform.SetPositionAndRotation(camPos.transform.position,
             Quaternion.Euler(new Vector3(camPos.transform.eulerAngles.x, camPos.transform.eulerAngles.y, 0)));
             
     }

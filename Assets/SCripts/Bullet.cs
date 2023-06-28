@@ -1,28 +1,31 @@
 using DG.Tweening;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviourPun,IPunObservable
 {
     public bool startShoot;
     //[SerializeField] ParticleSystem particle;
-    [HideInInspector] public Player player;
+    [HideInInspector] public MyPlayer player;
     [HideInInspector] public GunColor gunColor;
-    [SerializeField] Transform defParent;
+    public Transform defParent;
     [SerializeField] MeshRenderer meshRenderer;
-    Vector3 startPos,startRotation;
+    public Vector3 startPos,startRotation;
     float speed;
     float timer;
     private void Start()
     {
-        player = GetComponent<Player>();
-        startPos = transform.localPosition;
-        startRotation = transform.localEulerAngles;
-        defParent=transform.parent;
-        
+        player = GetComponent<MyPlayer>();
+      
     }
-    private void SetColor()
+
+
+    
+
+    [PunRPC]
+    void SetColorRPC()
     {
         switch (gunColor)
         {
@@ -30,7 +33,7 @@ public class Bullet : MonoBehaviour
                 meshRenderer.material.color = Color.red;
                 break;
             case GunColor.Green:
-                meshRenderer.material.color= Color.green;
+                meshRenderer.material.color = Color.green;
                 break;
             case GunColor.Blue:
                 meshRenderer.material.color = Color.blue;
@@ -42,12 +45,13 @@ public class Bullet : MonoBehaviour
                 break;
         }
     }
+
     public void Shoot(Vector3 targetPoint,float speed,GunColor gunColor)
     {
         //particle.Play();
         gameObject.SetActive(true);
         this.gunColor = gunColor;
-        SetColor();
+        photonView.RPC("SetColorRPC", RpcTarget.All);
         this.speed = speed;
         transform.LookAt(targetPoint);
         transform.DOScale(Vector3.one * 3f, 0.15f).SetId("BulletScale");
@@ -79,12 +83,15 @@ public class Bullet : MonoBehaviour
         gameObject.SetActive (false);
         startShoot=false;
         transform.SetParent(defParent);
-        transform.localScale = Vector3.one;
-        transform.SetAsLastSibling();
         transform.localEulerAngles = startRotation;
         transform.localPosition = startPos;
+        transform.localScale = Vector3.one;
+        transform.SetAsLastSibling();
+       
     }
 
-
-
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        
+    }
 }
