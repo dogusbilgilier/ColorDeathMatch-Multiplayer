@@ -6,6 +6,7 @@ TagManager:
   tags:
   - EnvironmentFloor
   - Environment
+  - Bullet
   layers:
   - Default
   - TransparentFX

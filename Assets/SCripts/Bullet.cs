@@ -2,6 +2,7 @@ using DG.Tweening;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bullet : MonoBehaviourPun,IPunObservable
@@ -15,18 +16,20 @@ public class Bullet : MonoBehaviourPun,IPunObservable
     public Vector3 startPos,startRotation;
     float speed;
     float timer;
+
     private void Start()
     {
         player = GetComponent<MyPlayer>();
-      
+    }
+    public void SetColor(GunColor gunColor)
+    {
+        photonView.RPC("SetColorRPC", RpcTarget.All, gunColor);
     }
 
-
-    
-
     [PunRPC]
-    void SetColorRPC()
+    void SetColorRPC(GunColor gunColor)
     {
+        this.gunColor = gunColor;
         switch (gunColor)
         {
             case GunColor.Red:
@@ -51,7 +54,6 @@ public class Bullet : MonoBehaviourPun,IPunObservable
         //particle.Play();
         gameObject.SetActive(true);
         this.gunColor = gunColor;
-        photonView.RPC("SetColorRPC", RpcTarget.All);
         this.speed = speed;
         transform.LookAt(targetPoint);
         transform.DOScale(Vector3.one * 3f, 0.15f).SetId("BulletScale");
@@ -77,19 +79,32 @@ public class Bullet : MonoBehaviourPun,IPunObservable
     }
     public void ResetShooting()
     {
-        //particle.Stop();
         DOTween.Kill("BulletScale");
 
-        gameObject.SetActive (false);
-        startShoot=false;
+        gameObject.SetActive(false);
+        GetComponentInChildren<Collider>().enabled = true;
+        startShoot = false;
         transform.SetParent(defParent);
         transform.localEulerAngles = startRotation;
         transform.localPosition = startPos;
         transform.localScale = Vector3.one;
         transform.SetAsLastSibling();
-       
+       // photonView.RPC("ResetShootingRPC", RpcTarget.All);
     }
+ 
+    void ResetShootingRPC()
+    {
+        DOTween.Kill("BulletScale");
 
+        gameObject.SetActive(false);
+        GetComponentInChildren<Collider>().enabled = true;
+        startShoot = false;
+        transform.SetParent(defParent);
+        transform.localEulerAngles = startRotation;
+        transform.localPosition = startPos;
+        transform.localScale = Vector3.one;
+        transform.SetAsLastSibling();
+    }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         

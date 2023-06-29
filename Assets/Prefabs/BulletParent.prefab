@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 3895060935424227168}
   - component: {fileID: 6367957833500065868}
   - component: {fileID: 726205146406918049}
+  - component: {fileID: 5541752127629508770}
   m_Layer: 0
   m_Name: BulletModel
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -83,6 +84,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &5541752127629508770
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2138697247956757701}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.015
+  m_Height: 0.07
+  m_Direction: 0
+  m_Center: {x: -0.03164644, y: -0.00014345301, z: 0.00024545897}
 --- !u!1 &8112313973232323190
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +159,8 @@ MonoBehaviour:
   gunColor: 0
   defParent: {fileID: 0}
   meshRenderer: {fileID: 726205146406918049}
+  startPos: {x: 0, y: 0, z: 0}
+  startRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &8857898805735300999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,6 +180,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
+  - {fileID: 8672672032688936525}
   - {fileID: 8742965006566592560}
   sceneViewId: 0
   InstantiationId: 0

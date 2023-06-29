@@ -6,47 +6,58 @@ using UnityEngine;
 public class HitDetector : MonoBehaviourPun
 {
     [SerializeField] MyPlayer player;
-
+    DamageData damageDatas;
+    Bullet bullet;
+    Collider collider;
+    private void Start()
+    {
+        damageDatas = ScriptableManager.Instance.damageData;
+    }
     private void OnTriggerEnter(Collider other)
     {
         switch (other.tag)
         {
             case "Bullet":
-                photonView.RPC("Hit", RpcTarget.All, other);
+                bullet = other.GetComponentInParent<Bullet>();
+                other.enabled = false;
+                if (bullet.startShoot)
+                    Hit();
+                    //photonView.RPC("Hit", RpcTarget.All);
                 break;
         }  
     }
 
-    [PunRPC]
-    void Hit(Collider other)
+ 
+    void Hit()
     {
-        other.enabled = false;
-        Bullet bullet = other.GetComponent<Bullet>();
-
-        if (bullet.gunColor.ToString().Equals(player.playerColor) || bullet.gunColor == GunColor.Purple)
+        Debug.Log("Hit");
+       
+        float damage = 0;
+        Debug.Log(name);
+        Debug.Log(bullet.name);
+        Debug.Log(bullet.gunColor);
+        if (bullet.gunColor.ToString().Equals(player.playerColor) || bullet.gunColor == GunColor.Purple) //ColorMatchedHit
         {
-
+            damage = damageDatas.colorMatchMultiplier * damageDatas.regularHit;
             if (name.Contains("Head"))
             {
-                //MegaHit
+                damage = damageDatas.colorMatchedHeadShot;
 
             }
-            else
-            {
-                //PerfectHit
-
-            }
+           
 
         }
         else
         {
+            damage = damageDatas.regularHit;
             if (name.Contains("Head"))
             {
-                //HeadShot
+                damage += damageDatas.regularHit * damageDatas.colorMatchMultiplier;
 
             }
         }
         bullet.ResetShooting();
+        player.GetHit(damage);
     }
 }
 

@@ -14,6 +14,8 @@ public class InputManager : MonoBehaviourPun
     public Vector2 mouseInputDelta;
 
 
+    bool stopCursorDelta;
+
     private void OnEnable()
     {
         shootingManager = GetComponent<ShootingManager>();
@@ -26,6 +28,8 @@ public class InputManager : MonoBehaviourPun
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            stopCursorDelta = true;
+            mouseInputDelta = Vector2.zero;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
@@ -33,12 +37,14 @@ public class InputManager : MonoBehaviourPun
         {
             if (Input.GetMouseButtonDown(0))
             {
+                stopCursorDelta = false;
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
 
         movementInputDelta = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        if(stopCursorDelta==false)
         mouseInputDelta = new Vector2(Input.GetAxis("Mouse X") * xSens, Input.GetAxis("Mouse Y")) * ySens;
         speedBoost = Input.GetKey(KeyCode.LeftShift);
         jump = Input.GetKey(KeyCode.Space);

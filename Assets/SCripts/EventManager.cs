@@ -5,5 +5,5 @@ using System;
 
 public class EventManager 
 {
-    public static Func<HitPoints> HitPonts;
+  
 }

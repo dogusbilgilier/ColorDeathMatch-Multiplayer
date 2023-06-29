@@ -9,7 +9,11 @@ public class MyPlayer : MonoBehaviourPun
 
     public static GameObject LocalPlayerInstance;
 
-
+    [Range(0, 100)] public float health;
+    public PlayerColor playerColor;
+    public GunColor gunColor;
+    [SerializeField] SkinnedMeshRenderer meshRenderer;
+    [SerializeField] Bullet[] myBulelts;
     private void Awake()
     {
         if (photonView.IsMine)
@@ -19,16 +23,12 @@ public class MyPlayer : MonoBehaviourPun
         DontDestroyOnLoad(this.gameObject);
     }
 
-    [Range(0, 100)] public int health;
-    public PlayerColor playerColor;
-    public GunColor gunColor;
-    [SerializeField] SkinnedMeshRenderer meshRenderer;
-
     private IEnumerator Start()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.1f);
         photonView.RPC("Initialize", RpcTarget.All);
     }
+
     [PunRPC]
     void Initialize()
     {
@@ -61,10 +61,20 @@ public class MyPlayer : MonoBehaviourPun
                 break;
         }
         meshRenderer.materials = materials;
+
+        foreach (var item in myBulelts)
+        {
+            item.SetColor(gunColor);
+        }
     }
 
-    public void GetHit()
+    public void GetHit(float damage)
     {
-
+        photonView.RPC("GetHitRPC", RpcTarget.All, damage);
+    }
+    [PunRPC]
+    void GetHitRPC(float damage)
+    {
+        health -= damage;
     }
 }
