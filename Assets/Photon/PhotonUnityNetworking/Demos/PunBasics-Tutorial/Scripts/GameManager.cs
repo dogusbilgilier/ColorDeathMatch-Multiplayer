@@ -65,7 +65,7 @@ namespace Photon.Pun.Demo.PunBasics
 			} else {
 
 
-				if (PlayerManager.LocalPlayerInstance==null)
+				/*if (MyPl.LocalPlayerInstance==null)
 				{
 				    Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
 
@@ -74,7 +74,7 @@ namespace Photon.Pun.Demo.PunBasics
 				}else{
 
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
-				}
+				}*/
 
 
 			}

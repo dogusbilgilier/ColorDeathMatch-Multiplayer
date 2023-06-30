@@ -7,6 +7,8 @@ TagManager:
   - EnvironmentFloor
   - Environment
   - Bullet
+  - MyColorIndicator
+  - MyBulletIndicator
   layers:
   - Default
   - TransparentFX

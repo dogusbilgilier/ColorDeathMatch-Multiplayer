@@ -206,7 +206,6 @@ public class PlayerMovement : MonoBehaviourPun
         switch(step)
         {
             case Fsm.Step.Enter:
-                Debug.Log("Start Boost State");
                 playerAnimation.BoostAnim(true);
                 break;
             case Fsm.Step.Update:
@@ -226,7 +225,6 @@ public class PlayerMovement : MonoBehaviourPun
         switch (step)
         {
             case Fsm.Step.Enter:
-                Debug.Log("Start Idle State");
                 playerAnimation.IdleAnim(true);
                 break;
             case Fsm.Step.Update:
@@ -245,7 +243,6 @@ public class PlayerMovement : MonoBehaviourPun
         switch (step)
         {
             case Fsm.Step.Enter:
-                Debug.Log("Start Move State");
                 playerAnimation.RunAnim(true);
                 break;
             case Fsm.Step.Update:
@@ -269,7 +266,6 @@ public class PlayerMovement : MonoBehaviourPun
         switch (step)
         {
             case Fsm.Step.Enter:
-                Debug.Log("Start Jump State");
                 playerAnimation.RunAnim(false);
                 playerAnimation.BoostAnim(false);
                 playerAnimation.JumpAnim();

@@ -1,8 +1,6 @@
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,8 +16,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     #endregion
 
     #region Private Fields
-
-    private GameObject instance;
 
     [Tooltip("The prefab to use for representing the player")]
     [SerializeField]
@@ -43,7 +39,14 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             return;
         }
+        InstantiatePlayer();
+    }
 
+
+    #endregion
+
+    public void InstantiatePlayer()
+    {
         if (playerPrefab == null)
         { // #Tip Never assume public properties of Components are filled up properly, always check and inform the developer of it.
 
@@ -53,7 +56,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
 
 
-            if (PlayerManager.LocalPlayerInstance == null)
+            if (MyPlayer.LocalPlayerInstance == null)
             {
                 Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
 
@@ -68,11 +71,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
         }
-
     }
-
-
-    #endregion
 
     #region Photon Callbacks
 

@@ -10,7 +10,7 @@ public class Bullet : MonoBehaviourPun,IPunObservable
     public bool startShoot;
     //[SerializeField] ParticleSystem particle;
     [HideInInspector] public MyPlayer player;
-    [HideInInspector] public GunColor gunColor;
+     public GunColor gunColor;
     public Transform defParent;
     [SerializeField] MeshRenderer meshRenderer;
     public Vector3 startPos,startRotation;
@@ -29,6 +29,7 @@ public class Bullet : MonoBehaviourPun,IPunObservable
     [PunRPC]
     void SetColorRPC(GunColor gunColor)
     {
+        Debug.Log(name);
         this.gunColor = gunColor;
         switch (gunColor)
         {

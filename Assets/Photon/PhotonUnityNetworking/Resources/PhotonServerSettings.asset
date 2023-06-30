@@ -49,6 +49,9 @@ MonoBehaviour:
   - Initialize
   - Hit
   - ResetShootingRPC
+  - GetHitRPC
+  - ChangeMyColorRPC
+  - ChangeMyGunColorRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

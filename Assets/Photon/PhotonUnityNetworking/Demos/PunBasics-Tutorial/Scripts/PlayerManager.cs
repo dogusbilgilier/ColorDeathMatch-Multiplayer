@@ -26,8 +26,8 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("The current Health of our player")]
         public float Health = 1f;
 
-        [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
-        public static GameObject LocalPlayerInstance;
+        //[Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
+        //public static GameObject LocalPlayerInstance;
 
         #endregion
 
@@ -66,7 +66,7 @@ namespace Photon.Pun.Demo.PunBasics
             // used in GameManager.cs: we keep track of the localPlayer instance to prevent instanciation when levels are synchronized
             if (photonView.IsMine)
             {
-                LocalPlayerInstance = gameObject;
+                //LocalPlayerInstance = gameObject;
             }
 
             // #Critical
