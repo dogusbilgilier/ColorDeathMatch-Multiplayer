@@ -72,6 +72,8 @@ public class MyPlayer : MonoBehaviourPun
 
         bulletColor = GameObject.FindGameObjectWithTag("MyBulletIndicator").GetComponent<Image>();
         bulletColor.color = FindMyGunColor();
+        EventManager.SetColorSelectorActivity.Invoke(true);
+        EventManager.SetColorSelectorOutlines.Invoke(playerColor, gunColor);
        
     }
 
