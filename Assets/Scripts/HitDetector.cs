@@ -33,19 +33,16 @@ public class HitDetector : MonoBehaviourPun
         Debug.Log("Hit");
        
         float damage = 0;
-        Debug.Log(name);
-        Debug.Log(bullet.name);
-        Debug.Log(bullet.gunColor);
+
         if (bullet.gunColor.ToString().Equals(player.playerColor) || bullet.gunColor == GunColor.Purple) //ColorMatchedHit
         {
             damage = damageDatas.colorMatchMultiplier * damageDatas.regularHit;
+            Debug.Log("ColorMatchHit");
             if (name.Contains("Head"))
             {
                 damage = damageDatas.colorMatchedHeadShot;
 
             }
-           
-
         }
         else
         {

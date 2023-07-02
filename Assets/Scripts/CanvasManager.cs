@@ -15,7 +15,6 @@ public class CanvasManager : MonoBehaviour
     }
     public void SetPlayerColor(int siblingIndex)
     {
-        Debug.Log(siblingIndex);
         for (int i = 0; i < playerColors.Length; i++)
             playerColors[i].GetComponent<Outline>().enabled = false;
         playerColors[siblingIndex].GetComponent<Outline>().enabled = true;
@@ -33,7 +32,6 @@ public class CanvasManager : MonoBehaviour
     }
     public void StartButton()
     {
-        MyPlayer.LocalPlayerInstance.GetComponent<MyPlayer>().isInGame = true;
         MyPlayer.LocalPlayerInstance.GetComponent<MyPlayer>().OnStart();
         MyPlayer.LocalPlayerInstance.GetComponent<InputManager>().OnStart();
         SetColorSelectoractivity(false);

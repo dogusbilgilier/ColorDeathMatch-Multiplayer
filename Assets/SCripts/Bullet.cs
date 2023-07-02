@@ -29,7 +29,6 @@ public class Bullet : MonoBehaviourPun,IPunObservable
     [PunRPC]
     void SetColorRPC(GunColor gunColor)
     {
-        Debug.Log(name);
         this.gunColor = gunColor;
         switch (gunColor)
         {

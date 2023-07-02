@@ -1,29 +1,41 @@
 
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class MyPlayer : MonoBehaviourPun
 {
+    #region Properties
+
     public static GameObject LocalPlayerInstance;
 
+    //Public------------
+    public bool isInGame;
     [Range(0, 100)] public float health;
     public PlayerColor playerColor;
-    public GunColor gunColor;
+    public GunColor gunColor = GunColor.Red;
 
+    //Private------------
     [SerializeField] SkinnedMeshRenderer meshRenderer;
     [SerializeField] Bullet[] myBulelts;
 
-    [SerializeField] Image healthBar,bulletColor;
+    //IU-----
+    [SerializeField] Image healthBar, bulletColor;
+    [SerializeField] Image healthBarOnHead, bulletColorOnHead;
+
     Material[] materials;
 
-    public bool isInGame;
-    [SerializeField] Image healthBarOnHead, bulletColorOnHead;
+    #endregion
+
 
 
     private void Awake()
     {
+        materials = meshRenderer.materials;
         if (photonView.IsMine)
         {
             LocalPlayerInstance = this.gameObject;
@@ -33,27 +45,13 @@ public class MyPlayer : MonoBehaviourPun
 
     private IEnumerator Start()
     {
-
-        if (photonView.IsMine)
-        {
-            yield return new WaitForSeconds(0.1f);
-            photonView.RPC("Initialize", RpcTarget.All);
-
-            healthBar = GameObject.FindGameObjectWithTag("MyColorIndicator").GetComponent<Image>();
-            healthBar.fillAmount = health / 100f;
-            healthBar.color = FindMyColor();
-
-            bulletColor = GameObject.FindGameObjectWithTag("MyBulletIndicator").GetComponent<Image>();
-            bulletColor.color = FindMyGunColor();
-        }
-       
+        yield return new WaitForSeconds(0.1f);
+        photonView.RPC("Initialize", RpcTarget.All);
     }
 
     [PunRPC]
     void Initialize()
     {
-        materials = meshRenderer.materials;
-
         materials[0].color = FindMyColor();
         materials[1].color = FindMyGunColor();
 
@@ -65,19 +63,30 @@ public class MyPlayer : MonoBehaviourPun
             item.SetColor(gunColor);
             item.gameObject.SetActive(false);
         }
+
+        if (!photonView.IsMine) return;
+
+        healthBar = GameObject.FindGameObjectWithTag("MyColorIndicator").GetComponent<Image>();
+        healthBar.fillAmount = health / 100f;
+        healthBar.color = FindMyColor();
+
+        bulletColor = GameObject.FindGameObjectWithTag("MyBulletIndicator").GetComponent<Image>();
+        bulletColor.color = FindMyGunColor();
+       
     }
 
     public void OnStart()
     {
-
+        isInGame = true;
     }
 
     #region GetHit
     public void GetHit(float damage)
     {
-        photonView.RPC("GetHitRPC", RpcTarget.All, damage);
-        if(photonView.IsMine)
-        healthBar.fillAmount = health / 100f;
+        photonView.RPC("GetHitRPC", RpcTarget.AllBuffered, damage);
+
+        if (photonView.IsMine)
+            healthBar.fillAmount = health / 100f;
     }
     [PunRPC]
     void GetHitRPC(float damage)
@@ -90,16 +99,15 @@ public class MyPlayer : MonoBehaviourPun
     #region ChangeColors
     public void ChangeMyColor(PlayerColor color)
     {
-        photonView.RPC("ChangeMyColorRPC", RpcTarget.All, color);
+        photonView.RPC("ChangeMyColorRPC", RpcTarget.AllBuffered, color);
     }
     public void ChangeMyGunColor(GunColor color)
     {
-        photonView.RPC("ChangeMyGunColorRPC", RpcTarget.All, color);
+        photonView.RPC("ChangeMyGunColorRPC", RpcTarget.AllBuffered, color);
     }
     [PunRPC]
     void ChangeMyColorRPC(PlayerColor color)
     {
-       
         playerColor = color;
         materials[0].color = FindMyColor();
         if (photonView.IsMine == false) return;
@@ -111,9 +119,7 @@ public class MyPlayer : MonoBehaviourPun
        
         gunColor = color;
         materials[1].color = FindMyGunColor();
-
         if (photonView.IsMine == false) return;
-
         bulletColor.color = FindMyGunColor();
         foreach (var item in myBulelts)
         {
@@ -127,28 +133,38 @@ public class MyPlayer : MonoBehaviourPun
     #region ColorHelper
     public Color32 FindMyColor()
     {
-        Color32 myColor = Color.blue;
-
         switch (playerColor)
         {
-            case PlayerColor.Red: myColor = Color.red; break;
-            case PlayerColor.Green: myColor = Color.green; break;
-            case PlayerColor.Blue: myColor = Color.blue; break;
+            case PlayerColor.Red:return Color.red; 
+            case PlayerColor.Green: return Color.green; 
+            default: return Color.blue; 
         }
-        return myColor;
+
     }
     Color32 FindMyGunColor()
     {
-        Color32 myGunColor = Color.blue;
-
         switch (gunColor)
         {
-            case GunColor.Red: myGunColor = Color.red; break;
-            case GunColor.Green: myGunColor = Color.green; break;
-            case GunColor.Blue: myGunColor = Color.blue; break;
-            case GunColor.Purple: myGunColor = Color.red / 2; break;
+            case GunColor.Red: return Color.red;
+            case GunColor.Green: return Color.green;
+            case GunColor.Blue: return Color.blue;
+            default: return Color.red / 2;
         }
-        return myGunColor;
+        
     }
+    public void GetColors()
+    {
+        materials[0].color = FindMyColor();
+        materials[1].color = FindMyGunColor();
+        foreach (var item in myBulelts)
+        {
+            item.gameObject.SetActive(true);
+            item.SetColor(gunColor);
+            item.gameObject.SetActive(false);
+        }
+    }
+
+
     #endregion
+
 }

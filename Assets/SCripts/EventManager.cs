@@ -5,5 +5,4 @@ using System;
 
 public class EventManager 
 {
-  
 }
